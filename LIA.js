@@ -69,25 +69,30 @@ function logger(text, title) {
 
 async function START() {
   logger('Lia Bot V1 is starting..', 'system');
-  logger('> LOADING COMMANDS', 'system')
+  logger('Loading Commands..', 'system');
   await loadAllCommands();
-  logger('All Commands Loaded!', "system");
-  logger('Logging Account..', 'FCA')
+  logger('All Commands Loaded!', 'system');
+  logger('Logging Account..', 'FCA');
   await main(JSON.parse(fs.readFileSync('cookies.json', 'utf8')));
 }
-
 async function loadAllCommands() {
-  fs.readdirSync(path.join(__dirname, '/commands')).filter(index => index.endsWith('.js')).forEach(async (file) => {
-    try {
-      const data = await loadCommand(file);
-    } catch (err) {
-      logger(`Error loading ${file}: ${err.toString()}`, 'error');
-      return err;
-    }
-  });
-  return;
-}
+  return new Promise((resolve, reject) => {
+    fs.readdir(path.join(__dirname, '/commands'), (err, files) => {
+      if (err) {
+        reject(err);
+        return;
+      }
 
+      const commandsPromises = files
+        .filter(index => index.endsWith('.js'))
+        .map(file => loadCommand(file));
+
+      Promise.all(commandsPromises)
+        .then(() => resolve())
+        .catch(error => reject(error));
+    });
+  });
+}
 async function loadCommand(file) {
   const command = await import(`./commands/${file}`);
   if (!command.metadata || !command.metadata?.name || typeof command.metadata?.name !== 'string') {
@@ -106,14 +111,14 @@ async function loadCommand(file) {
         throw new Error(`Alias ${alias} for ${command.metadata.name} is not a string, fix it immediately`);
       }
       commands[alias] = command;
-      logger(`Loaded alias ${alias} for ${command.metadata.name} command`, 'success');
+      logger(`Loaded alias for ${command.metadata.name} command`, alias);
     });
     commands[command.metadata.name] = command;
-    logger(`Loaded command and alias for ${command.metadata.name}`, 'success');
+    logger(`Loaded successfully!`, command.metadata.name);
   }
 }
 
-function main(appState) {
+async function main(appState) {
   const login = require('fca-unofficial');
   login({ appState }, async (err, api) => {
     if (err) {
