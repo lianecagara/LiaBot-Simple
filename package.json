@@ -1,0 +1,25 @@
+{
+  "name": "Lia Bot V1",
+  "version": "1.0.0",
+  "description": "Simplest Open Source Chatbot",
+  "main": "LIA.js",
+  "type": "module",
+  "scripts": {
+    "test": "node LIA.js"
+  },
+  "keywords": [],
+  "author": "Liane Cagara",
+  "license": "FOSS",
+  "dependencies": {
+    "@types/node": "^18.0.6",
+    "axios": "^1.6.7",
+    "chalk": "^4.1.2",
+    "express": "^4.18.2",
+    "fca-unofficial": "^1.3.10",
+    "gradient-string": "^2.0.2",
+    "node-fetch": "^3.2.6",
+    "string-similarity": "^4.0.4",
+    "strip-ansi": "^7.1.0",
+    "vm2": "^3.9.19"
+  }
+}
